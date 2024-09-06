@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bubble Chart Generator</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .form-section, .table-section {
+            margin: 20px;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        .chart-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bubble Chart Generator</h1>
+    <div class="container">
+        <div class="form-section">
+            <form method="POST" enctype="multipart/form-data">
+                <h3>CSV Import</h3>
+                <input type="file" name="csv_file" accept=".csv">
+                <input type="submit" name="import_csv" value="Import CSV">
+                <br><br>
+             
+            </form>
+
+            <br>
+
+            <form method="POST">
+                <h3>Product Input and Details</h3>
+                <label>Product Name: </label><br>
+                <input type="text" name="product" value="{{ selected_product.product if selected_product else '' }}" required><br><br>
+
+                <label>Effectiveness: </label><br>
+                <input type="text" name="effectiveness" value="{{ selected_product.effectiveness if selected_product else '' }}" required><br><br>
+
+                <label>Invasiveness: </label><br>
+                <input type="text" name="invasiveness" value="{{ selected_product.invasiveness if selected_product else '' }}" required><br><br>
+
+                <label>Cost: </label><br>
+                <input type="text" name="cost" value="{{ selected_product.cost if selected_product else '' }}" required><br><br>
+
+                <label>Usability: </label><br>
+                <input type="text" name="usability" value="{{ selected_product.usability if selected_product else '' }}" required><br><br>
+
+                <input type="submit" name="add_product" value="Add/Update Product">
+            </form>
+
+            <br>
+            <form method="POST">
+                <h3>Select Product</h3>
+                <label>Select Product: </label><br>
+                <select name="selected_product">
+                    {% for product in product_data %}
+                        <option value="{{ product['product'] }}" {% if selected_product and selected_product.product == product['product'] %}selected{% endif %}>{{ product['product'] }}</option>
+                    {% endfor %}
+                </select><br><br>
+                <input type="submit" name="select_product" value="Select Product">
+            </form>
+
+            <br>
+            <form method="POST">
+                <h3>Bubble Chart Options</h3>
+
+                <label>X-axis: </label><br>
+                <select name="x_axis">
+                    <option value="effectiveness">Effectiveness</option>
+                    <option value="invasiveness">Invasiveness</option>
+                    <option value="cost">Cost</option>
+                    <option value="usability">Usability</option>
+                </select><br><br>
+
+                <label>Y-axis: </label><br>
+                <select name="y_axis">
+                    <option value="effectiveness">Effectiveness</option>
+                    <option value="invasiveness">Invasiveness</option>
+                    <option value="cost">Cost</option>
+                    <option value="usability">Usability</option>
+                </select><br><br>
+
+                <label>Bubble Size: </label><br>
+                <select name="bubble_size">
+                    <option value="effectiveness">Effectiveness</option>
+                    <option value="invasiveness">Invasiveness</option>
+                    <option value="cost">Cost</option>
+                    <option value="usability">Usability</option>
+                </select><br><br>
+
+                <input type="submit" name="create_chart" value="Create Bubble Chart">
+            </form>
+        </div>
+
+        <div class="table-section">
+            <h3>Product Data</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Effectiveness</th>
+                        <th>Invasiveness</th>
+                        <th>Cost</th>
+                        <th>Usability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in product_data %}
+                    <tr>
+                        <td>{{ product['product'] }}</td>
+                        <td>{{ product['effectiveness'] }}</td>
+                        <td>{{ product['invasiveness'] }}</td>
+                        <td>{{ product['cost'] }}</td>
+                        <td>{{ product['usability'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if chart_data %}
+    <div class="chart-section">
+        <h3>Generated Bubble Chart</h3>
+        <img src="data:image/png;base64,{{ chart_data }}" alt="Bubble Chart">
+    </div>
+    {% endif %}
+</body>
+</html>
